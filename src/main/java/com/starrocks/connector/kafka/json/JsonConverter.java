@@ -38,6 +38,8 @@ import org.apache.kafka.connect.storage.StringConverterConfig;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.apache.kafka.common.utils.Utils.mkSet;
@@ -168,7 +170,8 @@ public class JsonConverter implements Converter, HeaderConverter {
             public JsonNode toJson(final Schema schema, final Object value, final JsonConverterConfig config) {
                 if (!(value instanceof java.util.Date))
                     throw new DataException("Invalid type for Date, expected Date but was " + value.getClass());
-                return JSON_NODE_FACTORY.numberNode(Date.fromLogical(schema, (java.util.Date) value));
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                return JSON_NODE_FACTORY.textNode(dateFormat.format(((java.util.Date) value)));
             }
 
             @Override
@@ -184,7 +187,8 @@ public class JsonConverter implements Converter, HeaderConverter {
             public JsonNode toJson(final Schema schema, final Object value, final JsonConverterConfig config) {
                 if (!(value instanceof java.util.Date))
                     throw new DataException("Invalid type for Time, expected Date but was " + value.getClass());
-                return JSON_NODE_FACTORY.numberNode(Time.fromLogical(schema, (java.util.Date) value));
+                DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                return JSON_NODE_FACTORY.textNode(timeFormat.format(((java.util.Date) value)));
             }
 
             @Override
@@ -200,7 +204,8 @@ public class JsonConverter implements Converter, HeaderConverter {
             public JsonNode toJson(final Schema schema, final Object value, final JsonConverterConfig config) {
                 if (!(value instanceof java.util.Date))
                     throw new DataException("Invalid type for Timestamp, expected Date but was " + value.getClass());
-                return JSON_NODE_FACTORY.numberNode(Timestamp.fromLogical(schema, (java.util.Date) value));
+                DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                return JSON_NODE_FACTORY.textNode(datetimeFormat.format(((java.util.Date) value)));
             }
 
             @Override

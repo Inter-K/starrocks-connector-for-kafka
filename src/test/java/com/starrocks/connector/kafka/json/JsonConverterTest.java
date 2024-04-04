@@ -24,7 +24,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starrocks.connector.kafka.StarRocksSinkTask;
+import com.starrocks.connector.kafka.json.JsonConverter;
 import org.apache.kafka.connect.data.SchemaAndValue;
+import org.apache.kafka.connect.data.SchemaBuilder;
+import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.data.Date;
+import org.apache.kafka.connect.data.Timestamp;
+import org.apache.kafka.connect.data.Time;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,4 +67,23 @@ public class JsonConverterTest {
         System.out.println(jsonNodeDest.toString());
         Assert.assertEquals(jsonStr, jsonNodeDest.toString());
     }
+
+    @Test
+    public void testConvertToJsonWithDate() throws JsonProcessingException {
+        String expected = "2021-11-05";
+
+        JsonConverter jsonConverter = new JsonConverter();
+
+        final SchemaBuilder schemaBuilder;
+        schemaBuilder = SchemaBuilder.int32();
+        schemaBuilder.name(Date.LOGICAL_NAME);
+        Schema schema = schemaBuilder.build();
+
+        java.util.Date date = Date.toLogical(schema, 18936);
+        JsonNode jsonNode = jsonConverter.convertToJson(schema, date);
+        Assert.assertEquals(expected, jsonNode.asText());
+
+        jsonConverter.close();
+    }
+
 }
